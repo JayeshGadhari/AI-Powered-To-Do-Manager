@@ -82,7 +82,7 @@ http://127.0.0.1:5000
 
 You can add a screenshot of your running web app here:
 
-`![App Screenshot]("C:\Users\user\Pictures\Task2.png")`
+`![App Screenshot]("images/Task2.png")`
 
 ---
 
