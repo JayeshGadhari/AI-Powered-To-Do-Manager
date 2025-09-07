@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>AI Task Manager</title>
+  <style>
+    body { font-family: Arial; max-width: 800px; margin: 20px auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
+    .row { display: flex; gap: 8px; margin-bottom: 10px; }
+    input, select { flex: 1; padding: 8px; }
+    button { padding: 6px 12px; cursor: pointer; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-done { color: green; font-weight: bold; }
+    #summary { margin-top: 20px; padding: 10px; border: 1px solid #eee; background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h2>AI-Powered To-Do Manager</h2>
+
+  <div class="row">
+    <input id="idea" placeholder="Enter task title (e.g., Prepare for exam)" />
+    <button onclick="addTask()">Generate Task</button>
+    <button onclick="summarizeTasks()">Summarize Tasks</button>
+    <span id="loading" style="display:none;">Generating description...</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="taskList"></tbody>
+  </table>
+
+  <div id="summary"></div>
+
+<script>
+async function loadTasks() {
+  const res = await fetch('/tasks');
+  const tasks = await res.json();
+  const tbody = document.getElementById('taskList');
+  tbody.innerHTML = '';
+
+  tasks.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${t.title}" onchange="updateTask(${t.id}, 'title', this.value)" /></td>
+      <td><input type="text" value="${t.description}" onchange="updateTask(${t.id}, 'description', this.value)" /></td>
+      <td>
+        <select onchange="updateTask(${t.id}, 'status', this.value)" class="status-${t.status}">
+          <option value="pending" ${t.status==='pending'?'selected':''}>Pending</option>
+          <option value="done" ${t.status==='done'?'selected':''}>Done</option>
+        </select>
+      </td>
+      <td><button onclick="deleteTask(${t.id})">Delete</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function addTask() {
+  const idea = document.getElementById('idea').value.trim();
+  if (!idea) return alert("Please enter a task title!");
+
+  document.getElementById('loading').style.display = 'inline';
+  await fetch('/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idea })
+  });
+  document.getElementById('idea').value = '';
+  document.getElementById('loading').style.display = 'none';
+  loadTasks();
+}
+
+async function updateTask(id, field, value) {
+  await fetch(`/tasks/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ [field]: value })
+  });
+  loadTasks();
+}
+
+async function deleteTask(id) {
+  await fetch(`/tasks/${id}`, { method: 'DELETE' });
+  loadTasks();
+}
+
+async function summarizeTasks() {
+  const res = await fetch('/tasks/summarize');
+  const data = await res.json();
+  document.getElementById('summary').innerText = "Summary: " + data.summary;
+}
+
+window.onload = loadTasks;
+</script>
+</body>
+</html>
