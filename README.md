@@ -80,15 +80,15 @@ http://127.0.0.1:5000
 
 ## 📸 Screenshot
 
-You can add a screenshot of your running web app here:
+Screenshot of running web app here:
 
-`![App Screenshot](images/Task2.png)`
+![App Screenshot](images/Task2.png)
 
 ---
 
 ## 🎬 Demo Video
 
-You can add a link to your demo video here:
+You can watch demo video here:
 
-`[Watch Demo](https://drive.google.com/file/d/1SRSM8-QwvTlpP8qcKBEEf1LYGrC0zE_2/view?usp=sharing)`
+[Watch Demo](https://drive.google.com/file/d/1SRSM8-QwvTlpP8qcKBEEf1LYGrC0zE_2/view?usp=sharing)
 
